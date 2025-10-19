@@ -12,6 +12,7 @@ from ics2000.Devices import Device, Light, Dimmer, Optional, TemperatureHumidity
 
 _LOGGER = logging.getLogger(__name__)
 
+
 def constraint_int(inp, min_val, max_val) -> int:
     if inp < min_val:
         return min_val
@@ -67,34 +68,40 @@ class Hub:
     def pull_devices(self):
         device_type_values = [item.value for item in DeviceType]
         url = f'{Hub.base_url}/gateway.php'
-        params = {"action": "sync", "email": self._email, "mac": self.mac.replace(":", ""),
-                  "password_hash": self._password, "home_id": self._homeId}
+        params = {
+            "action": "sync", "email": self._email,
+            "mac": self.mac.replace(":", ""), "password_hash": self._password,
+            "home_id": self._homeId
+        }
         resp = requests.get(url, params=params)
         self._devices = []
+
         for device in resp.json():
-            decrypted = json.loads(decrypt(device["data"], self.aes))
-            if "module" in decrypted and "info" in decrypted["module"]:
-                decrypted = decrypted["module"]
-                name = decrypted["name"]
-                entity_id = decrypted["id"]
-                decrypted_device = decrypted["device"]
-                logging.debug(f'Device is {decrypted_device}')
-                if decrypted_device not in device_type_values:
+
+            data = json.loads(decrypt(device["data"], self.aes))
+
+            if 'module' in data and 'info' in data['module']:
+
+                name = data['module']['name']
+                entity_id = data['module']['id']
+                device_type = data['module']['device']
+
+                if device_type not in device_type_values:
                     self._devices.append(Device(name, entity_id, self))
                     continue
-                dev = DeviceType(decrypted_device)
-                logging.debug(f'Device type is {decrypted_device}')
-                if dev == DeviceType.LAMP:
-                    self._devices.append(Light(name, entity_id, self))
-                elif dev == DeviceType.DIMMER:
-                    self._devices.append(Dimmer(name, entity_id, self))
-                elif dev == DeviceType.OPEN_CLOSE:
-                    self._devices.append(Light(name, entity_id, self))
-                elif dev == DeviceType.DIMMABLE_LAMP:
-                    self._devices.append(Dimmer(name, entity_id, self))
-                elif dev == DeviceType.ZIGBEE_TEMPERATURE_AND_HUMIDITY_SENSOR:
-                    self._devices.append(TemperatureHumiditySensor(name, entity_id, self))
 
+                dev = DeviceType(device_type)
+                logging.debug(f'Device type is {device_type}')
+
+                self._devices.append(
+                    {
+                        DeviceType.LAMP: Light,  # 1
+                        DeviceType.DIMMER: Dimmer,  # 2
+                        DeviceType.OPEN_CLOSE: Light,  # 3
+                        DeviceType.DIMMABLE_LAMP: Dimmer,  # 24
+                        DeviceType.ZIGBEE_TEMPERATURE_AND_HUMIDITY_SENSOR: TemperatureHumiditySensor  # 46
+                    }[dev](name, entity_id, self)
+                )
             else:
                 pass  # TODO: log something here
 
@@ -189,15 +196,15 @@ class Hub:
     def get_temperature(self, entity):
         status = self.get_device_status(entity)
         if len(status) >= 1:
-            return round(status[4]/100.0,2)
+            return round(status[4] / 100.0, 2)
         return -1
 
     def get_humidity(self, entity):
         status = self.get_device_status(entity)
         if len(status) >= 1:
-            return round(status[11]/100.0,2)
+            return round(status[11] / 100.0, 2)
         return -1
-    
+
     def simple_command(self, entity, function, value):
         cmd = Command()
         cmd.setmac(self.mac)
@@ -215,7 +222,7 @@ class DeviceType(enum.Enum):
     LAMP = 1
     DIMMER = 2
     OPEN_CLOSE = 3
-    DIMMABLE_LAMP = 24,
+    DIMMABLE_LAMP = 24
     ZIGBEE_TEMPERATURE_AND_HUMIDITY_SENSOR = 46
 
 

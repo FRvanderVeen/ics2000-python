@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="ics2000",
-    version="0.2.0",
+    version="1.0.2",
     author="Rutger de Graaf",
     author_email="",
     description="Trust ICS-2000 Python library",
@@ -18,7 +18,7 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.10',
     install_requires=[
         'numpy',
         'pycryptodome',
