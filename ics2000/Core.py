@@ -142,16 +142,25 @@ class Hub:
     def zigbee_color_temp(self, entity, color_temp):
         color_temp = constraint_int(color_temp, 0, 600)
         cmd = self.simple_command(entity, 9, color_temp)
-        self.send_command_tcp(cmd.getcommand())
+        if self.ip_address:
+            self.send_command_udp(cmd.getcommandbytes())
+        else:
+            self.send_command_tcp(cmd.getcommand())
 
     def zigbee_dim(self, entity, dim_lvl):
         dim_lvl = constraint_int(dim_lvl, 1, 254)
         cmd = self.simple_command(entity, 4, dim_lvl)
-        self.send_command_tcp(cmd.getcommand())
+        if self.ip_address:
+            self.send_command_udp(cmd.getcommandbytes())
+        else:
+            self.send_command_tcp(cmd.getcommand())
 
     def zigbee_switch(self, entity, power):
         cmd = self.simple_command(entity, 3, (str(1) if power else str(0)))
-        self.send_command_tcp(cmd.getcommand())
+        if self.ip_address:
+            self.send_command_udp(cmd.getcommandbytes())
+        else:
+            self.send_command_tcp(cmd.getcommand())
 
     def get_device_status(self, entity) -> []:
         url = f'{Hub.base_url}/entity.php'
