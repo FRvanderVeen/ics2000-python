@@ -18,11 +18,11 @@ hub = get_hub(
 
 This will also list the devices connected
 ```
-hub.turnon(id of device to turn on)
+hub.turn_on(id of device to turn on)
   
-hub.turnoff(id of device to turn off)
+hub.turn_off(id of device to turn off)
 
-print(hub.getlampstatus(id of device))
+print(hub.get_lamp_status(id of device))
 ```
 
 Heavily WIP
