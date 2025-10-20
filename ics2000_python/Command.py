@@ -1,5 +1,5 @@
-from ics2000.Cryptographer import encrypt
-from ics2000.Bytes import np, insertbytes, insertint16, insertint32
+from ics2000_python.Cryptographer import encrypt
+from ics2000_python.Bytes import np, insertbytes, insertint16, insertint32
 
 
 class Command:
