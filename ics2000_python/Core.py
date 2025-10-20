@@ -6,9 +6,9 @@ import logging
 import socket
 import time
 
-from ics2000.Cryptographer import decrypt
-from ics2000.Command import Command
-from ics2000.Devices import Device, Light, Dimmer, Optional, TemperatureHumiditySensor
+from ics2000_python.Cryptographer import decrypt
+from ics2000_python.Command import Command
+from ics2000_python.Devices import Device, Light, Dimmer, Optional, TemperatureHumiditySensor
 
 _LOGGER = logging.getLogger(__name__)
 
