@@ -1,5 +1,5 @@
-from ics2000.Color import Xyz
-from ics2000.Bytes import insertint32, MAX_UINT_16, byte_to_int2
+from ics2000_python.Color import Xyz
+from ics2000_python.Bytes import insertint32, MAX_UINT_16, byte_to_int2
 import logging
 
 _LOGGER = logging.getLogger(__name__)

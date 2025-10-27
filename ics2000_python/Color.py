@@ -1,4 +1,4 @@
-from ics2000.Bytes import MAX_UINT_16, byte_to_int4, insertint16
+from ics2000_python.Bytes import MAX_UINT_16, byte_to_int4, insertint16
 import logging
 
 _LOGGER = logging.getLogger(__name__)
